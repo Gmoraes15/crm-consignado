@@ -214,10 +214,11 @@ export default function CRMConsignado() {
     .btn-danger:hover { background: #F7C1C1; }
     .content { padding: 20px 24px; flex: 1; }
     .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-    .metric-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 14px 16px; }
-    .metric-card .label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
-    .metric-card .value { font-size: 26px; font-weight: 500; color: var(--color-text-primary); line-height: 1; }
-    .metric-card .sub { font-size: 11px; color: var(--color-text-secondary); margin-top: 4px; }
+    .metric-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 16px 20px; position: relative; overflow: hidden; }
+    .metric-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #1D9E75; }
+    .metric-card .label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em; display: flex; align-items: center; gap: 6px; }
+    .metric-card .value { font-size: 32px; font-weight: 500; color: var(--color-text-primary); line-height: 1; }
+    .metric-card .sub { font-size: 11px; color: var(--color-text-secondary); margin-top: 6px; }
     .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 16px 20px; margin-bottom: 16px; }
     .card h3 { font-size: 14px; font-weight: 500; margin-bottom: 12px; color: var(--color-text-primary); }
     .client-table { width: 100%; border-collapse: collapse; }
@@ -289,26 +290,47 @@ export default function CRMConsignado() {
         )}
         <div className="grid-4">
           <div className="metric-card">
-            <div className="label">Clientes totais</div>
+            <div className="label"><i className="ti ti-users" aria-hidden="true"></i> Clientes totais</div>
             <div className="value">{clients.length}</div>
+            <div className="sub">na carteira</div>
           </div>
-          <div className="metric-card">
-            <div className="label">Novos leads</div>
+          <div className="metric-card" style={{ "--accent": "#1D9E75" }}>
+            <div className="label"><i className="ti ti-user-plus" aria-hidden="true"></i> Novos leads</div>
             <div className="value" style={{ color: "#1D9E75" }}>{novoLeads}</div>
+            <div className="sub">aguardando contato</div>
           </div>
           <div className="metric-card">
-            <div className="label">Retornos hoje</div>
+            <div className="label"><i className="ti ti-calendar-event" aria-hidden="true"></i> Retornos hoje</div>
             <div className="value" style={{ color: retornosHoje > 0 ? "#BA7517" : undefined }}>{retornosHoje}</div>
+            <div className="sub">{retornosHoje > 0 ? "atenção necessária" : "nenhum agendado"}</div>
           </div>
           <div className="metric-card">
-            <div className="label">Sem contato 90 dias</div>
+            <div className="label"><i className="ti ti-clock-off" aria-hidden="true"></i> Sem contato 90 dias</div>
             <div className="value" style={{ color: semContato90.length > 0 ? "#A32D2D" : undefined }}>{semContato90.length}</div>
             <div className="sub">clientes esquecidos</div>
           </div>
         </div>
-        <div className="metric-card" style={{ marginBottom: 20, display: "inline-block", width: "auto", minWidth: 200 }}>
-          <div className="label">Contratos fechados este mês</div>
-          <div className="value" style={{ color: "#0F6E56" }}>{contratosMes}</div>
+        <div className="grid-4" style={{ marginBottom: 20 }}>
+          <div className="metric-card" style={{ gridColumn: "span 1" }}>
+            <div className="label"><i className="ti ti-file-check" aria-hidden="true"></i> Contratos este mês</div>
+            <div className="value" style={{ color: "#0F6E56" }}>{contratosMes}</div>
+            <div className="sub">fechados no mês</div>
+          </div>
+          <div className="metric-card">
+            <div className="label"><i className="ti ti-chart-pie" aria-hidden="true"></i> Taxa de conversão</div>
+            <div className="value" style={{ color: "#185FA5" }}>{clients.length ? Math.round(clients.filter(c => c.status === "Contrato fechado").length / clients.length * 100) : 0}%</div>
+            <div className="sub">leads → contratos</div>
+          </div>
+          <div className="metric-card">
+            <div className="label"><i className="ti ti-hourglass" aria-hidden="true"></i> Em andamento</div>
+            <div className="value">{clients.filter(c => !["Contrato fechado","Perdido"].includes(c.status)).length}</div>
+            <div className="sub">em negociação</div>
+          </div>
+          <div className="metric-card">
+            <div className="label"><i className="ti ti-trophy" aria-hidden="true"></i> Contratos totais</div>
+            <div className="value" style={{ color: "#0F6E56" }}>{clients.filter(c => c.status === "Contrato fechado").length}</div>
+            <div className="sub">histórico geral</div>
+          </div>
         </div>
         <div className="dash-grid">
           <div className="card">
