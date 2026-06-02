@@ -192,9 +192,9 @@ export default function CRMConsignado() {
     .sidebar-logo { padding: 20px 16px 14px; border-bottom: 0.5px solid var(--color-border-tertiary); }
     .sidebar-logo h1 { font-size: 15px; font-weight: 500; color: var(--color-text-primary); line-height: 1.3; }
     .sidebar-logo p { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
-    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; font-size: 13px; color: var(--color-text-secondary); cursor: pointer; border: none; background: none; width: 100%; text-align: left; border-radius: 0; transition: background 0.15s; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; font-size: 13px; color: var(--color-text-secondary); cursor: pointer; border: none; border-bottom: 0.5px solid var(--color-border-tertiary); background: none; width: 100%; text-align: left; border-radius: 0; transition: background 0.15s; }
     .nav-item:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
-    .nav-item.active { background: var(--color-background-secondary); color: var(--color-text-primary); font-weight: 500; }
+    .nav-item.active { background: var(--color-background-secondary); color: var(--color-text-primary); font-weight: 500; border-left: 3px solid #1D9E75; padding-left: 13px; }
     .nav-item i { font-size: 17px; }
     .nav-badge { margin-left: auto; background: #E24B4A; color: #fff; font-size: 10px; font-weight: 500; border-radius: 10px; padding: 1px 6px; }
     .nav-section { font-size: 10px; color: var(--color-text-secondary); padding: 14px 16px 4px; letter-spacing: 0.08em; text-transform: uppercase; }
@@ -210,7 +210,7 @@ export default function CRMConsignado() {
     .btn-primary { background: #1D9E75; color: #fff; border-color: #1D9E75; }
     .btn-primary:hover { background: #0F6E56; }
     .btn-sm { padding: 5px 10px; font-size: 12px; }
-    .btn-danger { background: #FCEBEB; color: #A32D2D; border-color: #F7C1C1; }
+    .btn-danger { background: #FCEBEB; color: #A32D2D; border-color: #F7C1C1; font-weight: 500; }
     .btn-danger:hover { background: #F7C1C1; }
     .content { padding: 20px 24px; flex: 1; }
     .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
@@ -242,8 +242,8 @@ export default function CRMConsignado() {
     .note-date { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 3px; font-weight: 500; }
     .note-text { font-size: 13px; color: var(--color-text-primary); line-height: 1.5; }
     .note-input { width: 100%; min-height: 70px; resize: vertical; font-size: 13px; }
-    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; }
-    .modal { background: var(--color-background-primary); border-radius: var(--border-radius-lg); width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; border: 0.5px solid var(--color-border-tertiary); }
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(2px); }
+    .modal { background: var(--color-background-primary); border-radius: var(--border-radius-lg); width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; border: 0.5px solid var(--color-border-tertiary); box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
     .modal-header { padding: 18px 20px 14px; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; justify-content: space-between; align-items: center; }
     .modal-header h3 { font-size: 16px; font-weight: 500; }
     .modal-body { padding: 20px; }
@@ -431,7 +431,7 @@ export default function CRMConsignado() {
           <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
             <button className="btn btn-sm wpp-btn" onClick={() => openWhatsApp(c.whatsapp)}><i className="ti ti-brand-whatsapp" aria-hidden="true"></i> WhatsApp</button>
             <button className="btn btn-sm" onClick={() => openEdit(c)}><i className="ti ti-edit" aria-hidden="true"></i> Editar</button>
-            <button className="btn btn-sm btn-danger" onClick={() => deleteClient(c.id)}><i className="ti ti-trash" aria-hidden="true"></i></button>
+            <button className="btn btn-sm btn-danger" onClick={() => deleteClient(c.id)}><i className="ti ti-trash" aria-hidden="true"></i> Excluir</button>
           </div>
 
           <div style={{ marginBottom: 12 }}>
