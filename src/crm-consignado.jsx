@@ -147,12 +147,11 @@ export default function CRMConsignado() {
     setShowForm(true);
   }
 
-  function addNote(clientId) {
-    if (!noteText.trim()) return;
-    const nota = { data: today(), texto: noteText.trim() };
+  function addNote(clientId, text) {
+    if (!text || !text.trim()) return;
+    const nota = { data: today(), texto: text.trim() };
     setClients(prev => prev.map(c => c.id === clientId ? { ...c, historico: [nota, ...c.historico] } : c));
     setSelectedClient(prev => prev ? { ...prev, historico: [nota, ...prev.historico] } : prev);
-    setNoteText("");
     showToast("Anotação salva!");
   }
 
@@ -269,9 +268,12 @@ export default function CRMConsignado() {
     .wpp-btn:hover { background: #1da851; }
     .alert-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: var(--border-radius-md); background: var(--color-background-secondary); margin-bottom: 8px; }
     .alert-row:last-child { margin-bottom: 0; }
-    .chips-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
-    .chip { padding: 4px 12px; border-radius: 10px; font-size: 12px; border: 0.5px solid var(--color-border-secondary); cursor: pointer; background: var(--color-background-primary); color: var(--color-text-secondary); transition: all 0.1s; }
-    .chip.active { background: var(--color-background-secondary); color: var(--color-text-primary); font-weight: 500; border-color: var(--color-border-primary); }
+    .chips-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .chip { padding: 6px 14px; border-radius: var(--border-radius-md); font-size: 12px; font-weight: 500; border: 0.5px solid var(--color-border-secondary); cursor: pointer; background: var(--color-background-primary); color: var(--color-text-secondary); transition: all 0.15s; display: flex; align-items: center; gap: 5px; }
+    .chip:hover { background: var(--color-background-secondary); color: var(--color-text-primary); border-color: var(--color-border-primary); }
+    .chip.active { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+    .detail-section { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 12px 14px; margin-bottom: 10px; }
+    .detail-section-title { font-size: 11px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.07em; font-weight: 500; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
     .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .retorno-alert { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: var(--border-radius-md); background: #FAEEDA; border: 0.5px solid #FAC775; margin-bottom: 12px; }
     .retorno-alert i { color: #BA7517; font-size: 16px; }
@@ -439,75 +441,85 @@ export default function CRMConsignado() {
 
   function ClientDetail({ client: c }) {
     const cfg = STATUS_CONFIG[c.status];
+    const [localNote, setLocalNote] = useState("");
     return (
       <div className="detail-panel">
         <div className="detail-header">
           <div className="detail-avatar" style={{ background: avatarColor(c.nome) }}>{initials(c.nome)}</div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontWeight: 500, fontSize: 14, marginBottom: 2 }}>{c.nome}</div>
+            <div style={{ fontWeight: 500, fontSize: 15, marginBottom: 4 }}>{c.nome}</div>
             <span className="status-badge" style={{ background: cfg.bg, color: cfg.color }}>{c.status}</span>
           </div>
           <button className="btn btn-sm" style={{ padding: "5px 8px" }} onClick={() => setSelectedClient(null)}><i className="ti ti-x" aria-hidden="true"></i></button>
         </div>
         <div className="detail-body">
-          <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+          <div style={{ display: "flex", gap: 6, marginBottom: 16, flexWrap: "wrap" }}>
             <button className="btn btn-sm wpp-btn" onClick={() => openWhatsApp(c.whatsapp)}><i className="ti ti-brand-whatsapp" aria-hidden="true"></i> WhatsApp</button>
             <button className="btn btn-sm" onClick={() => openEdit(c)}><i className="ti ti-edit" aria-hidden="true"></i> Editar</button>
             <button className="btn btn-sm btn-danger" onClick={() => deleteClient(c.id)}><i className="ti ti-trash" aria-hidden="true"></i> Excluir</button>
           </div>
 
-          <div style={{ marginBottom: 12 }}>
-            <div className="section-title">Status</div>
+          <div className="detail-section">
+            <div className="detail-section-title"><i className="ti ti-flag" aria-hidden="true"></i> Status</div>
             <select value={c.status} onChange={e => updateStatus(c.id, e.target.value)} style={{ width: "100%", fontSize: 13 }}>
               {Object.keys(STATUS_CONFIG).map(s => <option key={s}>{s}</option>)}
             </select>
           </div>
 
-          <div style={{ marginBottom: 14 }}>
-            <div className="section-title">Retorno agendado</div>
+          <div className="detail-section">
+            <div className="detail-section-title"><i className="ti ti-calendar" aria-hidden="true"></i> Retorno agendado</div>
             {c.retorno ? (
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span className={`retorno-tag ${c.retorno < hoje ? "retorno-late" : ""}`} style={{ fontSize: 13, padding: "4px 10px" }}>
-                  <i className="ti ti-calendar" style={{ fontSize: 13 }} aria-hidden="true"></i>
+                <span className={`retorno-tag ${c.retorno < hoje ? "retorno-late" : ""}`} style={{ fontSize: 13, padding: "5px 12px" }}>
+                  <i className="ti ti-calendar-check" style={{ fontSize: 13 }} aria-hidden="true"></i>
                   {formatDate(c.retorno)}
                 </span>
-                <button className="btn btn-sm" onClick={() => setShowRetornoModal(c.id)}>Alterar</button>
+                <button className="btn btn-sm" onClick={() => setShowRetornoModal(c.id)}><i className="ti ti-edit" aria-hidden="true"></i></button>
+                <button className="btn btn-sm btn-danger" onClick={() => { setClients(prev => prev.map(x => x.id === c.id ? { ...x, retorno: null } : x)); setSelectedClient(prev => prev ? { ...prev, retorno: null } : prev); showToast("Retorno removido."); }} style={{ padding: "5px 8px" }}><i className="ti ti-x" aria-hidden="true"></i></button>
               </div>
             ) : (
               <button className="btn btn-sm" onClick={() => setShowRetornoModal(c.id)}><i className="ti ti-calendar-plus" aria-hidden="true"></i> Agendar retorno</button>
             )}
           </div>
 
-          <div className="section-title">Dados do cliente</div>
-          {[
-            ["CPF", c.cpf], ["Telefone", c.telefone], ["WhatsApp", c.whatsapp],
-            ["Cidade", c.cidade], ["Nascimento", formatDate(c.nascimento)],
-          ].map(([l, v]) => (
-            <div key={l} className="info-row"><span className="info-label">{l}</span><span className="info-val">{v || "—"}</span></div>
-          ))}
+          <div className="detail-section">
+            <div className="detail-section-title"><i className="ti ti-user" aria-hidden="true"></i> Dados pessoais</div>
+            {[
+              ["CPF", c.cpf], ["Telefone", c.telefone], ["WhatsApp", c.whatsapp],
+              ["Cidade", c.cidade], ["Nascimento", formatDate(c.nascimento)],
+            ].map(([l, v]) => (
+              <div key={l} className="info-row"><span className="info-label">{l}</span><span className="info-val">{v || "—"}</span></div>
+            ))}
+          </div>
 
-          <div className="section-title" style={{ marginTop: 16 }}>Benefício</div>
-          {[
-            ["Tipo", c.tipoBeneficio], ["Nº Benefício", c.numeroBeneficio || "—"],
-            ["Banco pagador", c.bancoPagador], ["Valor", c.valorBeneficio ? `R$ ${Number(c.valorBeneficio).toLocaleString("pt-BR")}` : "—"],
-          ].map(([l, v]) => (
-            <div key={l} className="info-row"><span className="info-label">{l}</span><span className="info-val">{v}</span></div>
-          ))}
+          <div className="detail-section">
+            <div className="detail-section-title"><i className="ti ti-id-badge" aria-hidden="true"></i> Benefício</div>
+            {[
+              ["Tipo", c.tipoBeneficio], ["Nº Benefício", c.numeroBeneficio || "—"],
+              ["Banco pagador", c.bancoPagador], ["Valor", c.valorBeneficio ? `R$ ${Number(c.valorBeneficio).toLocaleString("pt-BR")}` : "—"],
+            ].map(([l, v]) => (
+              <div key={l} className="info-row"><span className="info-label">{l}</span><span className="info-val">{v}</span></div>
+            ))}
+          </div>
 
-          <div className="section-title" style={{ marginTop: 16 }}>Nova anotação</div>
-          <textarea className="note-input" placeholder="Digite o que aconteceu na ligação..." value={noteText} onChange={e => setNoteText(e.target.value)} />
-          <button className="btn btn-primary btn-sm" style={{ marginTop: 8, width: "100%" }} onClick={() => addNote(c.id)}>
-            <i className="ti ti-device-floppy" aria-hidden="true"></i> Salvar anotação
-          </button>
+          <div className="detail-section">
+            <div className="detail-section-title"><i className="ti ti-pencil" aria-hidden="true"></i> Nova anotação</div>
+            <textarea className="note-input" placeholder="Digite o que aconteceu na ligação..." value={localNote} onChange={e => setLocalNote(e.target.value)} />
+            <button className="btn btn-primary btn-sm" style={{ marginTop: 8, width: "100%" }} onClick={() => { if (!localNote.trim()) return; addNote(c.id, localNote); setLocalNote(""); }}>
+              <i className="ti ti-device-floppy" aria-hidden="true"></i> Salvar anotação
+            </button>
+          </div>
 
-          <div className="section-title" style={{ marginTop: 16 }}>Histórico ({c.historico.length})</div>
-          {c.historico.length === 0 && <div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>Nenhuma anotação ainda.</div>}
-          {c.historico.map((h, i) => (
-            <div key={i} className="note-item">
-              <div className="note-date">{formatDate(h.data)}</div>
-              <div className="note-text">{h.texto}</div>
-            </div>
-          ))}
+          <div className="detail-section">
+            <div className="detail-section-title"><i className="ti ti-history" aria-hidden="true"></i> Histórico ({c.historico.length})</div>
+            {c.historico.length === 0 && <div style={{ fontSize: 12, color: "var(--color-text-secondary)", padding: "8px 0" }}>Nenhuma anotação ainda.</div>}
+            {c.historico.map((h, i) => (
+              <div key={i} className="note-item">
+                <div className="note-date">{formatDate(h.data)}</div>
+                <div className="note-text">{h.texto}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -720,7 +732,7 @@ export default function CRMConsignado() {
     );
   }
 
-  const viewTitle = { dashboard: "Dashboard", clientes: `Clientes (${filteredClients.length})`, esquecidos: "Clientes esquecidos", retornos: "Agenda de retornos" };
+  const viewTitle = { dashboard: "Dashboard", clientes: "Clientes", esquecidos: "Clientes esquecidos", retornos: "Agenda de retornos" };
 
   return (
     <>
