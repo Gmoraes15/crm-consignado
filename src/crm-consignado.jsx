@@ -475,7 +475,7 @@ export default function CRMConsignado() {
                   {formatDate(c.retorno)}
                 </span>
                 <button className="btn btn-sm" onClick={() => setShowRetornoModal(c.id)}><i className="ti ti-edit" aria-hidden="true"></i></button>
-                <button className="btn btn-sm btn-danger" onClick={() => { setClients(prev => prev.map(x => x.id === c.id ? { ...x, retorno: null } : x)); setSelectedClient(prev => prev ? { ...prev, retorno: null } : prev); showToast("Retorno removido."); }} style={{ padding: "5px 8px" }}><i className="ti ti-x" aria-hidden="true"></i></button>
+                <button className="btn btn-sm" style={{ background: "#FCEBEB", color: "#A32D2D", borderColor: "#F7C1C1", padding: "5px 10px", fontWeight: 500 }} onClick={() => { setClients(prev => prev.map(x => x.id === c.id ? { ...x, retorno: null } : x)); setSelectedClient(prev => prev ? { ...prev, retorno: null } : prev); showToast("Retorno removido."); }}><i className="ti ti-trash" aria-hidden="true"></i> Remover</button>
               </div>
             ) : (
               <button className="btn btn-sm" onClick={() => setShowRetornoModal(c.id)}><i className="ti ti-calendar-plus" aria-hidden="true"></i> Agendar retorno</button>
@@ -515,7 +515,19 @@ export default function CRMConsignado() {
             {c.historico.length === 0 && <div style={{ fontSize: 12, color: "var(--color-text-secondary)", padding: "8px 0" }}>Nenhuma anotação ainda.</div>}
             {c.historico.map((h, i) => (
               <div key={i} className="note-item">
-                <div className="note-date">{formatDate(h.data)}</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
+                  <div className="note-date">{formatDate(h.data)}</div>
+                  <button
+                    style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-secondary)", fontSize: 13, padding: "2px 4px", borderRadius: 4 }}
+                    title="Excluir anotação"
+                    onClick={() => {
+                      const novoHistorico = c.historico.filter((_, idx) => idx !== i);
+                      setClients(prev => prev.map(x => x.id === c.id ? { ...x, historico: novoHistorico } : x));
+                      setSelectedClient(prev => prev ? { ...prev, historico: novoHistorico } : prev);
+                      showToast("Anotação excluída.", "info");
+                    }}
+                  ><i className="ti ti-trash" aria-hidden="true"></i></button>
+                </div>
                 <div className="note-text">{h.texto}</div>
               </div>
             ))}
