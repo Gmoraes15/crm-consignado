@@ -518,7 +518,7 @@ export default function CRMConsignado() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
                   <div className="note-date">{formatDate(h.data)}</div>
                   <button
-                    style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-secondary)", fontSize: 13, padding: "2px 4px", borderRadius: 4 }}
+                    style={{ background: "#FCEBEB", border: "0.5px solid #F7C1C1", cursor: "pointer", color: "#A32D2D", fontSize: 12, padding: "3px 8px", borderRadius: 4, fontWeight: 500, display: "flex", alignItems: "center", gap: 4 }}
                     title="Excluir anotação"
                     onClick={() => {
                       const novoHistorico = c.historico.filter((_, idx) => idx !== i);
@@ -526,7 +526,7 @@ export default function CRMConsignado() {
                       setSelectedClient(prev => prev ? { ...prev, historico: novoHistorico } : prev);
                       showToast("Anotação excluída.", "info");
                     }}
-                  ><i className="ti ti-trash" aria-hidden="true"></i></button>
+                  ><i className="ti ti-trash" style={{ fontSize: 12 }} aria-hidden="true"></i> Excluir</button>
                 </div>
                 <div className="note-text">{h.texto}</div>
               </div>
